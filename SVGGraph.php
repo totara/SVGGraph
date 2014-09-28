@@ -201,6 +201,7 @@ abstract class Graph {
   protected $back_matter = '';
 
   protected $namespaces = array();
+  /** @var SVGGraphJavascript */
   protected static $javascript = NULL;
   private static $last_id = 0;
   private static $precision = 5;
