@@ -346,30 +346,51 @@ class Javascript {
     $this->insertFunction($realname, $content);
   }
 
-  /**
-   * Convert hex from regex matched entity to javascript escape sequence
-   */
-  public static function hex2js($m)
+  public static function hex_callback($m)
   {
-    return sprintf('\u%04x', base_convert($m[1], 16, 10));
+      return self::dec2utf8(hexdec($m[1]));
   }
 
-  /**
-   * Convert decimal from regex matched entity to javascript escape sequence
-   */
-  public static function dec2js($m)
+  public static function dec_callback($m)
   {
-    return sprintf('\u%04x', $m[1]);
+      return self::dec2utf8($m[1]);
   }
 
-  public static function reEscape($string)
+    /**
+     * Returns the utf8 string corresponding to the unicode value
+     * (from php.net, courtesy - romans@void.lv)
+     */
+  public static function dec2utf8($num)
   {
-    // convert XML char entities to JS unicode
-    $string = preg_replace_callback('/&#x([a-f0-9]+);/',
-      'Goat1000\\SVGGraph\\Javascript::hex2js', $string);
-    $string = preg_replace_callback('/&#([0-9]+);/',
-      'Goat1000\\SVGGraph\\Javascript::dec2js', $string);
-    return $string;
+      if ($num < 128) {
+          return chr($num);
+      }
+      if ($num < 2048) {
+          return chr(($num >> 6) + 192) . chr(($num & 63) + 128);
+      }
+      if ($num < 65536) {
+          return chr(($num >> 12) + 224) . chr((($num >> 6) & 63) + 128) . chr(($num & 63) + 128);
+      }
+      if ($num < 2097152) {
+          return chr(($num >> 18) + 240) . chr((($num >> 12) & 63) + 128) . chr((($num >> 6) & 63) + 128) . chr(($num & 63) + 128);
+      }
+      return '';
+  }
+
+    /**
+     * Convert XML char entities to unicode.
+     */
+  public static function deEntity($string)
+  {
+      if (!is_string($string) or is_numeric($string)) {
+          return $string;
+      }
+
+      $string = preg_replace_callback('/&#x([a-f0-9]+);/',
+          'Goat1000\\SVGGraph\\Javascript::hex_callback', $string);
+      $string = preg_replace_callback('/&#([0-9]+);/',
+          'Goat1000\\SVGGraph\\Javascript::dec_callback', $string);
+      return $string;
   }
 
   /**
@@ -381,11 +402,11 @@ class Javascript {
   {
     $q = $quote ? '"' : '';
     if($more === null)
-      $this->variables[$var] = $q . $this->reEscape($value) . $q;
+      $this->variables[$var] = $q . $this->DeEntity($value) . $q;
     elseif($value === null)
-      $this->variables[$var][] = $q . $this->reEscape($more) . $q;
+      $this->variables[$var][] = $q . $this->DeEntity($more) . $q;
     else
-      $this->variables[$var][$value] = $q . $this->reEscape($more) . $q;
+      $this->variables[$var][$value] = $q . $this->DeEntity($more) . $q;
   }
 
   /**
@@ -496,7 +517,7 @@ class Javascript {
       $this->insertNumberVar('fostep', -$out);
     }
     $this->insertVariable('fades', $element['id'],
-      '{id:"' . $target . '",dir:0}', false);
+        array('id' => $target, 'dir' => 0));
     $this->insertNumberVar('fstart', $in ? 0 : 1);
 
     if($duplicate)
@@ -580,22 +601,7 @@ class Javascript {
     if(count($this->variables)) {
       $vlist = [];
       foreach($this->variables as $name => $value) {
-        $var = $name;
-        if(is_array($value)) {
-          if(isset($value[0]) && isset($value[count($value)-1])) {
-            $var .= '=[' . implode(',', $value) . ']';
-          } else {
-            $vs = [];
-            foreach($value as $k => $v)
-              if($k)
-                $vs[] = $k . ':' . $v;
-
-            $var .= '={' . implode(',', $vs) . '}';
-          }
-        } elseif($value !== null) {
-          $var .= '=' . $value;
-        }
-        $vlist[] = $var;
+          $vlist[] = $name . '=' . json_encode($value);
       }
       $variables = 'var ' . implode(', ', $vlist) . ';';
     }
