@@ -215,6 +215,7 @@ abstract class Graph {
   protected $back_matter = '';
 
   protected $namespaces = array();
+  /** @var SVGGraphJavascript */
   protected static $javascript = NULL;
   private static $last_id = 0;
   private static $precision = 5;
@@ -1127,10 +1128,10 @@ abstract class Graph {
    * - use $value:$more for assoc
    * - use null:$more for array
    */
-  public function InsertVariable($var, $value, $more = NULL, $quote = TRUE)
+  public function InsertVariable($var, $value, $more = NULL)
   {
     $this->LoadJavascript();
-    Graph::$javascript->InsertVariable($var, $value, $more, $quote);
+    Graph::$javascript->InsertVariable($var, $value, $more);
   }
 
   /**
@@ -1289,7 +1290,6 @@ abstract class Graph {
     }
     if(is_null($text))
       return;
-    $text = addslashes(str_replace("\n", '\n', $text));
     Graph::$javascript->SetTooltip($element, $text, $duplicate);
   }
 

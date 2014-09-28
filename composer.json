@@ -4,6 +4,7 @@
   "homepage": "http://www.goat1000.com/svggraph.php",
   "license": "LGPL-3.0",
   "require": {
+    "phpunit/phpunit": "4.2.*",
     "php": ">=5.2.0",
     "lib-pcre": "*"
   },
