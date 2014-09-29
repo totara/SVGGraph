@@ -159,7 +159,7 @@ class SVGGraph {
   {
     // load the relevant class file
     if(!class_exists($class, FALSE))
-      include 'SVGGraph' . $class . '.php';
+      include dirname(__FILE__) . '/' . 'SVGGraph' . $class . '.php';
 
     $g = new $class($this->width, $this->height, $this->settings);
     $g->Values($this->values);
@@ -1106,7 +1106,7 @@ abstract class Graph {
   private function LoadJavascript()
   {
     if(!isset(Graph::$javascript)) {
-      include_once 'SVGGraphJavascript.php';
+      include_once dirname(__FILE__) . '/' . 'SVGGraphJavascript.php';
       Graph::$javascript = new SVGGraphJavascript($this->settings, $this);
     }
   }
