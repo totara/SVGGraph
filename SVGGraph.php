@@ -142,7 +142,7 @@ class SVGGraph {
   {
     // load the relevant class file
     if(!class_exists($class, FALSE))
-      include 'SVGGraph' . $class . '.php';
+      include dirname(__FILE__) . '/' . 'SVGGraph' . $class . '.php';
 
     $g = new $class($this->width, $this->height, $this->settings);
     $g->Values($this->values);
