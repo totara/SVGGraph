@@ -1597,6 +1597,9 @@ abstract class Graph {
           $svg['onload'] = $onload;
       }
     }
+    if ($this->preserve_aspect_ratio) {
+      $svg['preserveAspectRatio'] = $this->preserve_aspect_ratio;
+    }
 
     // insert any gradients that are used
     foreach($this->gradients as $key => $gradient)
