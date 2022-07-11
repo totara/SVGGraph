@@ -1440,6 +1440,10 @@ abstract class Graph {
     if(!$defer_javascript)
       $foot .= $this->fetchJavascript(true, !$this->namespace);
 
+    if ($this->preserve_aspect_ratio) {
+      $svg['preserveAspectRatio'] = $this->preserve_aspect_ratio;
+    }
+
     // add defs to heading
     $heading .= $this->defs->get();
 
