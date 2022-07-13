@@ -354,20 +354,64 @@ class Javascript {
     return $string;
   }
 
+  public static function hex_callback($m)
+  {
+    return self::dec2utf8(hexdec($m[1]));
+  }
+
+  public static function dec_callback($m)
+  {
+    return self::dec2utf8($m[1]);
+  }
+
+  /**
+   * Returns the utf8 string corresponding to the unicode value
+   * (from php.net, courtesy - romans@void.lv)
+   */
+  public static function dec2utf8($num)
+  {
+    if ($num < 128) {
+      return chr($num);
+    }
+    if ($num < 2048) {
+      return chr(($num >> 6) + 192) . chr(($num & 63) + 128);
+    }
+    if ($num < 65536) {
+      return chr(($num >> 12) + 224) . chr((($num >> 6) & 63) + 128) . chr(($num & 63) + 128);
+    }
+    if ($num < 2097152) {
+      return chr(($num >> 18) + 240) . chr((($num >> 12) & 63) + 128) . chr((($num >> 6) & 63) + 128) . chr(($num & 63) + 128);
+    }
+    return '';
+  }
+
+  /**
+   * Convert XML char entities to unicode.
+   */
+  public static function DeEntity($string)
+  {
+    if (!is_string($string) or is_numeric($string)) {
+      return $string;
+    }
+
+    $string = preg_replace_callback('/&#x([a-f0-9]+);/', 'Goat1000\SVGGraph\Javascript::hex_callback', $string);
+    $string = preg_replace_callback('/&#([0-9]+);/', 'Goat1000\SVGGraph\Javascript::dec_callback', $string);
+    return $string;
+  }
+
   /**
    * Adds a Javascript variable
    * - use $value:$more for assoc
    * - use NULL:$more for array
    */
-  public function insertVariable($var, $value, $more = null, $quote = true)
+  public function insertVariable($var, $value, $more = null)
   {
-    $q = $quote ? '"' : '';
     if($more === null)
-      $this->variables[$var] = $q . $this->reEscape($value) . $q;
+      $this->variables[$var] = $this->DeEntity($value);
     elseif($value === null)
-      $this->variables[$var][] = $q . $this->reEscape($more) . $q;
+      $this->variables[$var][] = $this->DeEntity($more);
     else
-      $this->variables[$var][$value] = $q . $this->reEscape($more) . $q;
+      $this->variables[$var][$value] = $this->DeEntity($more);
   }
 
   /**
@@ -478,7 +522,7 @@ class Javascript {
       $this->insertNumberVar('fostep', -$out);
     }
     $this->insertVariable('fades', $element['id'],
-      '{id:"' . $target . '",dir:0}', false);
+      array('id' => $target, 'dir' => 0));
     $this->insertNumberVar('fstart', $in ? 0 : 1);
 
     if($duplicate)
@@ -554,6 +598,19 @@ class Javascript {
   }
 
   /**
+   * Wrapper for standard json_encode or emulation method.
+   * @param mixed $value
+   * @return string
+   */
+  public static function json_encode($value)
+  {
+      if (is_null($value)) {
+          return 'null';
+      }
+      return json_encode($value);
+  }
+
+  /**
    * Returns the variables (and comments) as Javascript code
    */
   public function getVariables()
@@ -562,22 +619,7 @@ class Javascript {
     if(count($this->variables)) {
       $vlist = [];
       foreach($this->variables as $name => $value) {
-        $var = $name;
-        if(is_array($value)) {
-          if(isset($value[0]) && isset($value[count($value)-1])) {
-            $var .= '=[' . implode(',', $value) . ']';
-          } else {
-            $vs = [];
-            foreach($value as $k => $v)
-              if($k)
-                $vs[] = $k . ':' . $v;
-
-            $var .= '={' . implode(',', $vs) . '}';
-          }
-        } elseif($value !== null) {
-          $var .= '=' . $value;
-        }
-        $vlist[] = $var;
+        $vlist[] = $name . '=' . self::json_encode($value);
       }
       $variables = 'var ' . implode(', ', $vlist) . ';';
     }
