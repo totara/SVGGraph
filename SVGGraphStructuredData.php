@@ -11,7 +11,7 @@
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU Lesser General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
@@ -22,7 +22,7 @@
 /**
  * Class for structured data
  */
-class SVGGraphStructuredData implements Countable, ArrayAccess, Iterator { 
+class SVGGraphStructuredData implements Countable, ArrayAccess, Iterator {
 
   private $datasets = 0;
   private $key_field = 0;
@@ -179,20 +179,27 @@ class SVGGraphStructuredData implements Countable, ArrayAccess, Iterator {
   {
     throw new Exception("Cannot iterate " . __CLASS__);
   }
+  #[\ReturnTypeWillChange]
   public function current() { $this->notIterator(); }
+  #[\ReturnTypeWillChange]
   public function key() { $this->notIterator(); }
+  #[\ReturnTypeWillChange]
   public function next() { $this->notIterator(); }
+  #[\ReturnTypeWillChange]
   public function rewind() { $this->notIterator(); }
+  #[\ReturnTypeWillChange]
   public function valid() { $this->notIterator(); }
 
   /**
    * ArrayAccess methods
    */
+  #[\ReturnTypeWillChange]
   public function offsetExists($offset)
   {
     return array_key_exists($offset, $this->dataset_fields);
   }
-  
+
+  #[\ReturnTypeWillChange]
   public function offsetGet($offset)
   {
     return new SVGGraphStructuredDataIterator($this->data, $offset,
@@ -202,12 +209,15 @@ class SVGGraphStructuredData implements Countable, ArrayAccess, Iterator {
   /**
    * Don't allow writing to the data
    */
+  #[\ReturnTypeWillChange]
   public function offsetSet($offset, $value) { throw new Exception('Read-only'); }
+  #[\ReturnTypeWillChange]
   public function offsetUnset($offset) { throw new Exception('Read-only'); }
 
   /**
    * Countable method
    */
+  #[\ReturnTypeWillChange]
   public function count()
   {
     return $this->datasets;
@@ -485,7 +495,7 @@ class SVGGraphStructuredData implements Countable, ArrayAccess, Iterator {
 /**
  * For iterating over structured data
  */
-class SVGGraphStructuredDataIterator implements Iterator { 
+class SVGGraphStructuredDataIterator implements Iterator {
 
   private $data = 0;
   private $dataset = 0;
@@ -506,26 +516,31 @@ class SVGGraphStructuredDataIterator implements Iterator {
     $this->dataset_fields = $structure['value'];
   }
 
+  #[\ReturnTypeWillChange]
   public function current()
   {
     return $this->GetItemByIndex($this->position);
   }
 
+  #[\ReturnTypeWillChange]
   public function key()
   {
     return $this->position;
   }
 
+  #[\ReturnTypeWillChange]
   public function next()
   {
     ++$this->position;
   }
 
+  #[\ReturnTypeWillChange]
   public function rewind()
   {
     $this->position = 0;
   }
 
+  #[\ReturnTypeWillChange]
   public function valid()
   {
     return $this->position < $this->count;
@@ -552,7 +567,7 @@ class SVGGraphStructuredDataIterator implements Iterator {
   {
     if(is_null($this->key_field)) {
       if(isset($this->data[$key]))
-        return new SVGGraphStructuredDataItem($this->data[$key], 
+        return new SVGGraphStructuredDataItem($this->data[$key],
           $this->structure, $this->dataset, $key);
     } else {
       foreach($this->data as $item)
@@ -583,7 +598,7 @@ class SVGGraphStructuredDataItem {
     $this->key_field = $structure['key'];
     $this->dataset_fields = $structure['value'];
     $this->key = is_null($this->key_field) ? $key : $item[$this->key_field];
-    if(isset($this->dataset_fields[$dataset]) && 
+    if(isset($this->dataset_fields[$dataset]) &&
       isset($item[$this->dataset_fields[$dataset]]))
       $this->value = $item[$this->dataset_fields[$dataset]];
 

@@ -11,7 +11,7 @@
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU Lesser General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
@@ -77,6 +77,7 @@ class MultiGraph implements Countable, ArrayAccess, Iterator {
   /**
    * Implement Iterator interface
    */
+  #[\ReturnTypeWillChange]
   public function current()
   {
     if($this->item_cache_pos != $this->position) {
@@ -89,18 +90,22 @@ class MultiGraph implements Countable, ArrayAccess, Iterator {
     }
     return $this->item_cache;
   }
+  #[\ReturnTypeWillChange]
   public function key()
   {
     return $this->position;
   }
+  #[\ReturnTypeWillChange]
   public function next()
   {
     ++$this->position;
   }
+  #[\ReturnTypeWillChange]
   public function rewind()
   {
     $this->position = 0;
   }
+  #[\ReturnTypeWillChange]
   public function valid()
   {
     return $this->position < $this->ItemsCount();
@@ -109,11 +114,13 @@ class MultiGraph implements Countable, ArrayAccess, Iterator {
   /**
    * ArrayAccess methods
    */
+  #[\ReturnTypeWillChange]
   public function offsetExists($offset)
   {
     return ($offset >= 0 && $offset < $this->datasets);
   }
-  
+
+  #[\ReturnTypeWillChange]
   public function offsetGet($offset)
   {
     return $this->values[$offset];
@@ -122,12 +129,15 @@ class MultiGraph implements Countable, ArrayAccess, Iterator {
   /**
    * Don't allow writing to the data
    */
+  #[\ReturnTypeWillChange]
   public function offsetSet($offset, $value) { throw new Exception('Read-only'); }
+  #[\ReturnTypeWillChange]
   public function offsetUnset($offset) { throw new Exception('Read-only'); }
 
   /**
    * Countable method
    */
+  #[\ReturnTypeWillChange]
   public function count()
   {
     return $this->datasets;
@@ -186,7 +196,7 @@ class MultiGraph implements Countable, ArrayAccess, Iterator {
   {
     if(!is_null($this->max_key))
       return $this->max_key;
-    
+
     $max = array();
     for($i = 0; $i < $this->datasets; ++$i)
       $max[] = $this->values->GetMaxKey($i);
