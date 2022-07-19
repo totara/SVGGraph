@@ -11,7 +11,7 @@
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU Lesser General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
@@ -95,6 +95,7 @@ class SVGGraphColours implements Countable {
   /**
    * Implement Countable to make it non-countable
    */
+  #[\ReturnTypeWillChange]
   public function count()
   {
     throw new Exception("Cannot count SVGGraphColours class");
@@ -212,6 +213,7 @@ class SVGGraphColourArray implements ArrayAccess {
   /**
    * always true, because it wraps around
    */
+  #[\ReturnTypeWillChange]
   public function offsetExists($offset)
   {
     return true;
@@ -220,16 +222,19 @@ class SVGGraphColourArray implements ArrayAccess {
   /**
    * return the colour
    */
+  #[\ReturnTypeWillChange]
   public function offsetGet($offset)
   {
     return $this->colours[$offset % $this->count];
   }
 
+  #[\ReturnTypeWillChange]
   public function offsetSet($offset, $value)
   {
     $this->colours[$offset % $this->count] = $value;
   }
 
+  #[\ReturnTypeWillChange]
   public function offsetUnset($offset)
   {
     throw new Exception('Unexpected offsetUnset');
@@ -256,16 +261,19 @@ abstract class SVGGraphColourRange implements ArrayAccess {
   /**
    * always true, because it wraps around
    */
+  #[\ReturnTypeWillChange]
   public function offsetExists($offset)
   {
     return true;
   }
 
+  #[\ReturnTypeWillChange]
   public function offsetSet($offset, $value)
   {
     throw new Exception('Unexpected offsetSet');
   }
 
+  #[\ReturnTypeWillChange]
   public function offsetUnset($offset)
   {
     throw new Exception('Unexpected offsetUnset');
@@ -304,6 +312,7 @@ class SVGGraphColourRangeRGB extends SVGGraphColourRange {
   /**
    * Return the colour from the range
    */
+  #[\ReturnTypeWillChange]
   public function offsetGet($offset)
   {
     $c = max($this->count - 1, 1);
@@ -352,6 +361,7 @@ class SVGGraphColourRangeHSL extends SVGGraphColourRange {
   /**
    * Return the colour from the range
    */
+  #[\ReturnTypeWillChange]
   public function offsetGet($offset)
   {
     $c = max($this->count - 1, 1);

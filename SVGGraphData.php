@@ -11,7 +11,7 @@
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU Lesser General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
@@ -22,7 +22,7 @@
 /**
  * Class for standard data
  */
-class SVGGraphData implements Countable, ArrayAccess, Iterator { 
+class SVGGraphData implements Countable, ArrayAccess, Iterator {
 
   private $datasets = 0;
   private $data;
@@ -61,20 +61,27 @@ class SVGGraphData implements Countable, ArrayAccess, Iterator {
   {
     throw new Exception("Cannot iterate " . __CLASS__);
   }
+  #[\ReturnTypeWillChange]
   public function current() { $this->notIterator(); }
+  #[\ReturnTypeWillChange]
   public function key() { $this->notIterator(); }
+  #[\ReturnTypeWillChange]
   public function next() { $this->notIterator(); }
+  #[\ReturnTypeWillChange]
   public function rewind() { $this->notIterator(); }
+  #[\ReturnTypeWillChange]
   public function valid() { $this->notIterator(); }
 
   /**
    * ArrayAccess methods
    */
+  #[\ReturnTypeWillChange]
   public function offsetExists($offset)
   {
     return array_key_exists($offset, $this->data);
   }
-  
+
+  #[\ReturnTypeWillChange]
   public function offsetGet($offset)
   {
     return new SVGGraphDataIterator($this->data, $offset);
@@ -83,12 +90,15 @@ class SVGGraphData implements Countable, ArrayAccess, Iterator {
   /**
    * Don't allow writing to the data
    */
+  #[\ReturnTypeWillChange]
   public function offsetSet($offset, $value) { throw new Exception('Read-only'); }
+  #[\ReturnTypeWillChange]
   public function offsetUnset($offset) { throw new Exception('Read-only'); }
 
   /**
    * Countable method
    */
+  #[\ReturnTypeWillChange]
   public function count()
   {
     return $this->datasets;
@@ -255,7 +265,7 @@ class SVGGraphData implements Countable, ArrayAccess, Iterator {
 /**
  * Class to iterate over standard data
  */
-class SVGGraphDataIterator implements Iterator { 
+class SVGGraphDataIterator implements Iterator {
 
   private $data = 0;
   private $dataset = 0;
@@ -272,28 +282,33 @@ class SVGGraphDataIterator implements Iterator {
   /**
    * Iterator methods
    */
+  #[\ReturnTypeWillChange]
   public function current()
   {
     return $this->GetItemByIndex($this->position);
   }
 
+  #[\ReturnTypeWillChange]
   public function key()
   {
     return $this->position;
   }
 
+  #[\ReturnTypeWillChange]
   public function next()
   {
     ++$this->position;
     next($this->data[$this->dataset]);
   }
 
+  #[\ReturnTypeWillChange]
   public function rewind()
   {
     $this->position = 0;
     reset($this->data[$this->dataset]);
   }
 
+  #[\ReturnTypeWillChange]
   public function valid()
   {
     return $this->position < $this->count;
