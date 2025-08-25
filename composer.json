@@ -1,10 +1,9 @@
 {
-  "name": "goat1000/svggraph",
-  "description": "Generates SVG graphs",
-  "homepage": "http://www.goat1000.com/svggraph.php",
+  "name": "totara/svggraph",
+  "description": "Totara fork for SVG graph - Generates SVG graphs",
   "license": "LGPL-3.0-only",
   "require": {
-    "php": ">=5.4.0",
+    "php": ">=8.2.0",
     "lib-pcre": "*",
     "ext-json": "*"
   },
@@ -15,5 +14,8 @@
     "psr-4": {
       "Goat1000\\SVGGraph\\": ""
     }
+  },
+  "replace": {
+      "goat1000/svggraph": "self.version"
   }
 }
